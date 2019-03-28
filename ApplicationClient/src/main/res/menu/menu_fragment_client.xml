@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/secure_connect_scan"
+        android:icon="@drawable/ic_action_searching"
+        android:showAsAction="ifRoom"
+        android:title="@string/secure_connect"
+        app:showAsAction="ifRoom|withText"
+        tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/discoverable"
+        android:icon="@drawable/ic_action_discoverable"
+        android:title="@string/discoverable"
+        android:showAsAction="ifRoom"
+        app:showAsAction="ifRoom|withText"
+        tools:ignore="AppCompatResource"/>
+
+</menu>
