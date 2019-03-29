@@ -37,32 +37,22 @@ public class BluetoothClientFragment extends Fragment {
     private static final int REQUEST_ENABLE_BT = 3;
 
     // Layout Views
-    private ListView mConversationView;
+    private static ListView mConversationView;
 
-    /**
-     * Name of the connected device
-     */
-    private String mConnectedDeviceName = null;
+    // Name of the connected device
+    private static String mConnectedDeviceName = null;
 
-    /**
-     * Array adapter for the conversation thread
-     */
-    private ArrayAdapter<String> mConversationArrayAdapter;
+    // Array adapter for the conversation thread
+    private static ArrayAdapter<String> mConversationArrayAdapter;
 
-    /**
-     * String buffer for outgoing messages
-     */
+    // String buffer for outgoing messages
     private StringBuffer mOutStringBuffer;
 
-    /**
-     * Local Bluetooth adapter
-     */
-    private BluetoothAdapter mBluetoothAdapter = null;
+    // Local Bluetooth adapter
+    private static BluetoothAdapter mBluetoothAdapter = null;
 
-    /**
-     * Member object for the chat services
-     */
-    private BluetoothClientService mChatService = null;
+    // Member object for the chat services
+    private static BluetoothClientService mChatService = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,8 +79,10 @@ public class BluetoothClientFragment extends Fragment {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
             // Otherwise, setup the chat session
-        } else if (mChatService == null) {
+        } else {
+            //  if (mChatService == null) {  AAG
             setupChat();
+            //  }  AAG
         }
     }
 
@@ -183,15 +175,18 @@ public class BluetoothClientFragment extends Fragment {
      * @param subTitle status
      */
     private void setStatus(CharSequence subTitle) {
-        FragmentActivity activity = getActivity();
-        if (null == activity) {
-            return;
+        try {
+            FragmentActivity activity = getActivity();
+            if (null == activity) {
+                return;
+            }
+            final ActionBar actionBar = activity.getActionBar();
+            if (null == actionBar) {
+                return;
+            }
+            actionBar.setSubtitle(subTitle);
+        } catch (Exception ignored) {
         }
-        final ActionBar actionBar = activity.getActionBar();
-        if (null == actionBar) {
-            return;
-        }
-        actionBar.setSubtitle(subTitle);
     }
 
     /**
@@ -203,6 +198,7 @@ public class BluetoothClientFragment extends Fragment {
         public void handleMessage(Message msg) {
             FragmentActivity activity = getActivity();
             switch (msg.what) {
+
                 case Constants.MESSAGE_STATE_CHANGE:
                     switch (msg.arg1) {
                         case BluetoothClientService.STATE_CONNECTED:
@@ -218,7 +214,8 @@ public class BluetoothClientFragment extends Fragment {
                             break;
                     }
                     break;
-                case Constants.MESSAGE_WRITE:
+
+             /*   case Constants.MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
@@ -227,7 +224,8 @@ public class BluetoothClientFragment extends Fragment {
                     } else {
                         mConversationArrayAdapter.add("Me:  " + writeMessage);
                     }
-                    break;
+                    break;*/
+
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
@@ -245,25 +243,27 @@ public class BluetoothClientFragment extends Fragment {
                             try {
                                 c = Integer.valueOf(ss);
                                 MainActivity.textView.setBackgroundColor(c);
-                            }  catch (Exception ignored) {
+                            } catch (Exception ignored) {
                             }
                         }
                     } else {
                         mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     }
                     break;
+
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     if (null != activity) {
-                        Toast.makeText(activity, "Connected to "
-                                + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "Connected to " + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
                     }
                     break;
+
                 case Constants.MESSAGE_TOAST:
                     if (null != activity) {
-                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(Appl.getContext(), msg.getData().getString(Constants.TOAST), Toast.LENGTH_SHORT).show();
                     }
                     break;
             }
@@ -287,8 +287,7 @@ public class BluetoothClientFragment extends Fragment {
                 } else {
                     // User did not enable Bluetooth or an error occurred
                     Log.d(TAG, "BT not enabled");
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving,
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
                     getActivity().finish();
                 }
         }

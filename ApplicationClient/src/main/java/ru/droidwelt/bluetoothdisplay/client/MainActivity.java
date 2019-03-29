@@ -1,6 +1,7 @@
 
 package ru.droidwelt.bluetoothdisplay.client;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +13,7 @@ public class MainActivity extends FragmentActivity {
 
     public static final String TAG = "MainActivity";
     BluetoothClientFragment fragment;
+    @SuppressLint("StaticFieldLeak")
     static public TextView textView;
 
     @Override
